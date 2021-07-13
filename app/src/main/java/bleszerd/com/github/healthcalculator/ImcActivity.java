@@ -1,5 +1,7 @@
 package bleszerd.com.github.healthcalculator;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -56,10 +60,7 @@ public class ImcActivity extends AppCompatActivity {
                             runOnUiThread(() -> {
                                 if (calcId > 0) {
                                     Toast.makeText(this, R.string.saved_registry, Toast.LENGTH_SHORT).show();
-
-                                    Intent intent = new Intent(ImcActivity.this, ListCalcActivity.class);
-                                    intent.putExtra("type", "imc");
-                                    startActivity(intent);
+                                    openListCalcActivity();
                                 }
                             });
                         }).start();
@@ -81,6 +82,7 @@ public class ImcActivity extends AppCompatActivity {
                 && !editWeight.getText().toString().startsWith("0"));
     }
 
+    @StringRes
     private int imcResponse(double imc) {
         if (imc < 15) {
             return R.string.imc_severely_low_weight;
@@ -106,5 +108,29 @@ public class ImcActivity extends AppCompatActivity {
         rawHeight *= rawHeight;
 
         return weight / rawHeight;
+    }
+
+    private void openListCalcActivity() {
+        Intent intent = new Intent(ImcActivity.this, ListCalcActivity.class);
+        intent.putExtra("type", "imc");
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_list:
+                openListCalcActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
