@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,8 +47,22 @@ public class ImcActivity extends AppCompatActivity {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.imc_response, result))
                     .setMessage(imcResponseId)
-                    .setPositiveButton(android.R.string.ok, (dDialog, which) -> {
+                    .setPositiveButton(android.R.string.ok, (dDialog1, which) -> {
+                    })
+                    .setNegativeButton(R.string.save, (dDialog2, which) -> {
+                        new Thread(() -> {
+                            long calcId = SqlHelper.getInstance(this).addItem("imc", result);
 
+                            runOnUiThread(() -> {
+                                if (calcId > 0) {
+                                    Toast.makeText(this, R.string.saved_registry, Toast.LENGTH_SHORT).show();
+
+                                    Intent intent = new Intent(ImcActivity.this, ListCalcActivity.class);
+                                    intent.putExtra("type", "imc");
+                                    startActivity(intent);
+                                }
+                            });
+                        }).start();
                     })
                     .create();
 
