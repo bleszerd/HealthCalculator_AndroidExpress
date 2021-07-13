@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         List<MainItem> mainItems = new ArrayList<>();
-        mainItems.add(new MainItem(1, R.drawable.ic_imc_btn, R.string.imc, Color.RED));
-        mainItems.add(new MainItem(2, R.drawable.ic_tmb_btn, R.string.tmb, Color.GREEN));
+        mainItems.add(new MainItem(1, R.drawable.ic_imc_btn, R.string.imc, R.color.white));
+        mainItems.add(new MainItem(2, R.drawable.ic_tmb_btn, R.string.tmb,R.color.white));
 
         recyclerMain = findViewById(R.id.main_recycler);
         recyclerMain.setLayoutManager(new GridLayoutManager(this, 2));
