@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +37,25 @@ public class ListCalcActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     RecyclerView recyclerList = findViewById(R.id.recycler_view_list);
                     recyclerList.setLayoutManager(new LinearLayoutManager(this));
-                    recyclerList.setAdapter(new ListCalcAdapter(registers));
+
+                    ListCalcAdapter adapter = new ListCalcAdapter(registers);
+                    adapter.setListener(register -> {
+                        new AlertDialog.Builder(this)
+                                .setTitle(R.string.delete_register)
+                                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                                    boolean result = SqlHelper.getInstance(this).removeItem(register);
+                                    Log.d("Test", "Deleting " + result);
+                                    if (result) {
+                                        adapter.registers.remove(register);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                })
+                                .setNegativeButton(R.string.no, (dialog, which) -> {
+                                })
+                                .create()
+                                .show();
+                    });
+                    recyclerList.setAdapter(adapter);
                     Log.d("Test", registers.toString());
                 });
             }).start();
@@ -45,6 +65,15 @@ public class ListCalcActivity extends AppCompatActivity {
 
     class ListCalcAdapter extends RecyclerView.Adapter<ListCalcAdapter.ListCalcViewHolder> {
         List<Register> registers;
+        OnDetailItemClickListener listener;
+
+        private void updateRawRegisters(List<Register> registers){
+            this.registers = registers;
+        }
+
+        public void setListener(OnDetailItemClickListener listener) {
+            this.listener = listener;
+        }
 
         public ListCalcAdapter(List<Register> registers) {
             this.registers = registers;
@@ -74,6 +103,11 @@ public class ListCalcActivity extends AppCompatActivity {
             }
 
             public void bind(Register register) {
+                itemView.setOnLongClickListener(v -> {
+                    listener.onLongClick(register);
+                    return true;
+                });
+
                 String formatted = "";
                 try {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("pt", "BR"));

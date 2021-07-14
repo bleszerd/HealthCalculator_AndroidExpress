@@ -80,7 +80,7 @@ public class SqlHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM calc WHERE type_calc = ?", new String[]{type});
         try {
-            if(cursor.moveToFirst()){
+            if (cursor.moveToFirst()) {
                 do {
                     Register register = new Register();
 
@@ -94,11 +94,28 @@ public class SqlHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             Log.e("SqliteTest", e.getMessage(), e);
         } finally {
-            if(cursor != null && !cursor.isClosed()){
+            if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
         }
 
         return registers;
+    }
+
+    boolean removeItem(Register register) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+
+        int result = 0;
+        try {
+            result = db.delete("calc", "created_date=?", new String[]{register.createdDate});
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("Test", e.getMessage(), e);
+        } finally {
+            db.endTransaction();
+        }
+
+        return result > 0;
     }
 }

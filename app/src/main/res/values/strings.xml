@@ -25,4 +25,7 @@
     <string name="search">Buscar</string>
     <string name="tmb_desc">TMB é o cálculo para descobrir a quantidade calórica que o corpo necessita com base no seu estilo de vida</string>
     <string name="age">Idade</string>
+    <string name="delete_register">Excluir registro?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Nao</string>
 </resources>
